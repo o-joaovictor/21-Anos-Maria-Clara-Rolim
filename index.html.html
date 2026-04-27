@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maria Clara Rolim - 21 Anos</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Great+Vibes&family=Playfair+Display:ital,wght@1,400;1,500;1,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Paleta baseada na imagem enviada */
+            --magenta-metallic: #b01464; /* Rosa magenta vibrante da decoração */
+            --gold-vibrant: #c9a050;    /* Dourado dos balões e folhagens */
+            --off-white: #fcfaf5;      /* Creme/Branco das bexigas neutras */
+            --deep-purple: #2a0a1d;    /* Tom escuro para contrastes finos */
+            --text-main: #3d2b1f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #f2ede4;
+            font-family: 'Cormorant Garamond', serif;
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* --- Envelope Animation Upgrade --- */
+        #scene-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #envelope-wrapper {
+            position: relative;
+            width: 320px;
+            height: 220px;
+            z-index: 100;
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s;
+            perspective: 1000px;
+        }
+
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: var(--off-white);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transform-style: preserve-3d;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-top: 115px solid #ebe4d8;
+            z-index: 10;
+            transform-origin: top;
+            transition: transform 0.8s ease;
+        }
+
+        .envelope.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        .lacre {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 65px;
+            height: 65px;
+            background: radial-gradient(circle, #e6c57e, var(--gold-vibrant));
+            border-radius: 50%;
+            z-index: 11;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: opacity 0.4s;
+            cursor: pointer;
+        }
+
+        .lacre::after {
+            content: 'CR';
+            font-family: 'Great Vibes', cursive;
+            font-size: 26px;
+            color: rgba(60, 40, 0, 0.5);
+            font-weight: bold;
+        }
+
+        /* Animação de Saída do Envelope */
+        .exit-envelope {
+            transform: translateY(100vh) scale(0.8) !important;
+            opacity: 0;
+        }
+
+        /* --- Main Card Container --- */
+        #card-container {
+            display: none;
+            width: 92%;
+            max-width: 420px;
+            height: 85vh;
+            background-color: var(--off-white);
+            border: 0.5px solid var(--gold-vibrant);
+            position: absolute;
+            overflow-y: auto;
+            opacity: 0;
+            transform: translateY(-50px);
+            scrollbar-width: none;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+            z-index: 50;
+        }
+        
+        #card-container::-webkit-scrollbar { display: none; }
+
+        .reveal-card {
+            display: block !important;
+            animation: cardEntrance 1.2s forwards cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        @keyframes cardEntrance {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ornament {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            stroke: var(--gold-vibrant);
+            stroke-width: 0.8;
+            fill: none;
+            opacity: 0.7;
+        }
+        .top-left { top: 15px; left: 15px; }
+        .top-right { top: 15px; right: 15px; transform: rotate(90deg); }
+        .bottom-left { bottom: 15px; left: 15px; transform: rotate(270deg); }
+        .bottom-right { bottom: 15px; right: 15px; transform: rotate(180deg); }
+
+        .content {
+            padding: 50px 30px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Efeito de Staggered Reveal */
+        .reveal-item {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+
+        .show-item {
+            animation: itemFadeUp 0.8s forwards;
+        }
+
+        @keyframes itemFadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .badge {
+            border: 0.5px solid var(--magenta-metallic);
+            padding: 4px 12px;
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--magenta-metallic);
+            font-weight: 600;
+        }
+
+        .celebrating-text {
+            font-size: 0.9rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            color: var(--gold-vibrant);
+            font-weight: 400;
+        }
+
+        .name-main {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-weight: 600;
+            font-size: 3.4rem;
+            color: var(--magenta-metallic);
+            line-height: 1.1;
+            margin-bottom: 2px;
+        }
+
+        .surname {
+            font-size: 0.85rem;
+            letter-spacing: 12px;
+            text-transform: uppercase;
+            font-weight: 300;
+            margin-bottom: 25px;
+            color: var(--gold-vibrant);
+            margin-left: 12px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            width: 80%;
+            margin: 15px 0;
+        }
+        .line { flex: 1; height: 0.5px; background-color: var(--gold-vibrant); opacity: 0.4; }
+        .diamond { width: 5px; height: 5px; background-color: var(--gold-vibrant); transform: rotate(45deg); margin: 0 12px; }
+
+        .details {
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            font-weight: 300;
+            color: var(--text-main);
+            margin-bottom: 5px;
+        }
+
+        .address {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            font-style: italic;
+            opacity: 0.7;
+        }
+
+        .invite-phrase {
+            padding: 25px 0;
+            margin: 20px 0;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--text-main);
+            font-style: italic;
+            border-top: 0.5px solid var(--border-gold);
+            border-bottom: 0.5px solid var(--border-gold);
+        }
+
+        .countdown {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .time-box { display: flex; flex-direction: column; align-items: center; min-width: 50px; }
+        .time-val { font-size: 1.5rem; color: var(--magenta-metallic); font-weight: 300; }
+        .time-label { font-size: 0.55rem; text-transform: uppercase; color: var(--gold-vibrant); letter-spacing: 1px; }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 10px;
+            margin-top: auto;
+        }
+        .btn {
+            background: transparent;
+            border: 0.5px solid var(--magenta-metallic);
+            color: var(--magenta-metallic);
+            padding: 14px;
+            text-decoration: none;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .btn:hover { background: var(--magenta-metallic); color: white; }
+        .btn-gold { border-color: var(--gold-vibrant); color: var(--gold-vibrant); }
+        .btn-gold:hover { background: var(--gold-vibrant); color: white; }
+
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            background: var(--magenta-metallic);
+            color: white;
+            padding: 10px 20px;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: 0.4s;
+            z-index: 1000;
+        }
+
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 60;
+            opacity: 0.5;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.5; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast">Endereço copiado</div>
+
+    <div id="scene-container">
+        <!-- Envelope Stage -->
+        <div id="envelope-wrapper" onclick="openInvite()">
+            <div class="envelope" id="envelope">
+                <div class="envelope-flap"></div>
+                <div class="lacre"></div>
+            </div>
+            <p id="tap-hint" style="text-align: center; margin-top: 30px; letter-spacing: 4px; font-size: 0.7rem; color: var(--gold-vibrant); transition: 0.5s;">TOQUE NO LACRE PARA ABRIR</p>
+        </div>
+
+        <!-- Card Stage -->
+        <div id="card-container">
+            <svg class="ornament top-left" viewBox="0 0 100 100"><path d="M5,5 L40,5 M5,5 L5,40 M5,5 Q5,50 50,50 L5,5" /></svg>
+            <svg class="ornament top-right" viewBox="0 0 100 100"><path d="M5,5 L40,5 M5,5 L5,40 M5,5 Q5,50 50,50 L5,5" /></svg>
+            <svg class="ornament bottom-left" viewBox="0 0 100 100"><path d="M5,5 L40,5 M5,5 L5,40 M5,5 Q5,50 50,50 L5,5" /></svg>
+            <svg class="ornament bottom-right" viewBox="0 0 100 100"><path d="M5,5 L40,5 M5,5 L5,40 M5,5 Q5,50 50,50 L5,5" /></svg>
+
+            <div class="content">
+                <div class="badge-row reveal-item">
+                    <div class="badge">Festa Surpresa</div>
+                    <div class="badge">21 Anos</div>
+                </div>
+
+                <p class="celebrating-text reveal-item">Celebrando a Vida</p>
+                <h1 class="name-main reveal-item">Maria Clara</h1>
+                <p class="surname reveal-item">Rolim</p>
+
+                <div class="divider reveal-item">
+                    <div class="line"></div>
+                    <div class="diamond"></div>
+                    <div class="line"></div>
+                </div>
+
+                <div class="details reveal-item">
+                    09 de Maio — 17h00
+                </div>
+
+                <p class="address reveal-item">
+                    Rua Agenor Lopes, 424
+                </p>
+
+                <div class="invite-phrase reveal-item">
+                    "Celebrar a vida é melhor quando<br>
+                    estamos rodeados de quem amamos."<br>
+                    <small style="font-size: 0.85rem; display: block; margin-top: 15px; font-style: normal; color: var(--magenta-metallic); font-weight: 600; letter-spacing: 1px;">PONTUALIDADE: CHEGAR ÀS 16H40</small>
+                </div>
+
+                <div class="countdown reveal-item" id="countdown">
+                    <div class="time-box"><span class="time-val" id="days">00</span><span class="time-label">Dias</span></div>
+                    <div class="time-box"><span class="time-val" id="hours">00</span><span class="time-label">Hrs</span></div>
+                    <div class="time-box"><span class="time-val" id="mins">00</span><span class="time-label">Min</span></div>
+                    <div class="time-box"><span class="time-val" id="secs">00</span><span class="time-label">Seg</span></div>
+                </div>
+
+                <div class="btn-group reveal-item">
+                    <a href="https://waze.com/ul?q=Rua+Agenor+Lopes,+424" target="_blank" class="btn">Localização (Waze)</a>
+                    <button onclick="copyAddress()" class="btn btn-gold">Copiar Endereço</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openInvite() {
+            const envelope = document.getElementById('envelope');
+            const wrapper = document.getElementById('envelope-wrapper');
+            const card = document.getElementById('card-container');
+            const hint = document.getElementById('tap-hint');
+
+            // 1. Abrir aba
+            envelope.classList.add('open');
+            hint.style.opacity = '0';
+            
+            // 2. Envelope desce e convite aparece
+            setTimeout(() => {
+                wrapper.classList.add('exit-envelope');
+                card.classList.add('reveal-card');
+                
+                // 3. Efeito Staggered nos itens do card
+                const items = document.querySelectorAll('.reveal-item');
+                items.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.classList.add('show-item');
+                    }, 400 + (index * 150));
+                });
+
+                startParticles();
+            }, 800);
+        }
+
+        function copyAddress() {
+            const text = "Rua Agenor Lopes, 424";
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+
+            const toast = document.getElementById('toast');
+            toast.style.opacity = '1';
+            setTimeout(() => toast.style.opacity = '0', 2500);
+        }
+
+        // Countdown
+        const targetDate = new Date("May 09, 2026 17:00:00").getTime();
+        setInterval(() => {
+            const now = new Date().getTime();
+            const gap = targetDate - now;
+            if (gap > 0) {
+                document.getElementById('days').innerText = Math.floor(gap / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+                document.getElementById('hours').innerText = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+                document.getElementById('mins').innerText = Math.floor((gap % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+                document.getElementById('secs').innerText = Math.floor((gap % (1000 * 60)) / 1000).toString().padStart(2, '0');
+            }
+        }, 1000);
+
+        // Partículas Magenta e Douradas
+        function startParticles() {
+            const colors = ['#b01464', '#c9a050', '#fcfaf5'];
+            setInterval(() => {
+                const p = document.createElement('div');
+                p.classList.add('particle');
+                const size = Math.random() * 5 + 3;
+                p.style.width = `${size}px`;
+                p.style.height = `${size}px`;
+                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                p.style.borderRadius = Math.random() > 0.5 ? '50%' : '1px';
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.top = '-20px';
+                const duration = Math.random() * 3 + 5;
+                p.style.animationDuration = `${duration}s`;
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), duration * 1000);
+            }, 350);
+        }
+    </script>
+</body>
+</html>
